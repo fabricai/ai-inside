@@ -134,6 +134,10 @@ export const invoice = async (
             } does not have a valid vatPercent [ ${allowedVatRatesForCountry.join(
                 ', '
             )} ] for year ${year} :: now it is ${invoiceRow.vatPercent}`;
+            if (verbose) {
+                console.log(message);
+            }
+            return { isValid: false, message };
         }
     }
     return { isValid: true };
