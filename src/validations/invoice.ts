@@ -6,16 +6,20 @@ import { IFabricaiInvoice } from '../interfaces/invoice';
 import validator from '../interfaces/invoice/index-ti';
 
 import { MAXIMUM_ALLOWED_DIFFERENCE_BETWEEN_TWO_EQUAL_VALUES } from '../variables';
+import { TISOCountry } from '../types/country';
+import { allowedVatPercentage } from '../constants/vatPercentage';
 /**
  * Checks whether the invoice is valid AND its math is valid and sound
  * Also check that mimeType of each attachment matches magic number
  *
  * The rest of the validations will be
  * @param value valid FabricAI invoice
+ * @param invoiceRecepientCountry country of the integration (at the moment should be just FI)
  * @param verbose whether to print out the reason for failuer
  */
 export const invoice = async (
     value: IFabricaiInvoice,
+    invoiceRecepientCountry: TISOCountry = 'FI',
     verbose?: boolean
 ): Promise<IValidationOutput> => {
     const { IFabricaiInvoice: validateFabricai } = createCheckers(validator);
@@ -110,6 +114,27 @@ export const invoice = async (
             console.log(message);
         }
         return { isValid: false, message };
+    }
+
+    /**
+     * Make sure that vatRate is found
+     *
+     * Note :: use vatDeductionPercent to adjust the vatRate if necessary
+     */
+    const year = invoiceDate.split('-')[0];
+    const allowedVatRatesForCountry =
+        allowedVatPercentage[invoiceRecepientCountry] &&
+        allowedVatPercentage[invoiceRecepientCountry][year]
+            ? allowedVatPercentage[invoiceRecepientCountry][year]
+            : [];
+    for (const invoiceRow of invoiceRows) {
+        if (!allowedVatRatesForCountry.includes(invoiceRow.vatPercent)) {
+            const message = `For invoice ${value.id} validations failed :: the invoiceRow ${
+                invoiceRow.id
+            } does not have a valid vatPercent [ ${allowedVatRatesForCountry.join(
+                ', '
+            )} ] for year ${year} :: now it is ${invoiceRow.vatPercent}`;
+        }
     }
     return { isValid: true };
 };
