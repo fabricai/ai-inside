@@ -12,11 +12,11 @@
     <a href="https://fabricai.fi"><strong>FabricAI»</strong></a>
     <br />
     <br />
-    <a href="../tree/master/src/interfaces">Interfaces</a>
+    <a href="https://github.com/fabricai/ai-inside/tree/master/src/interfaces">Interfaces</a>
     ·
-    <a href="../tree/master/src/validations">Validations</a>
+    <a href="https://github.com/fabricai/ai-inside/tree/master/src/validations">Validations</a>
     ·
-    <a href="../tree/master/src/sampleFlow">Sample Flow</a>
+    <a href="https://github.com/fabricai/ai-inside/tree/master/src/sampleFlow">Sample Flow</a>
     ·
     <a href="https://fabricai.fi/company/">Contact us</a>
   </p>
