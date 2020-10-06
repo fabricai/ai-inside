@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "target": "es5",
+        "module": "commonjs",
+        "allowJs": true,
+        "checkJs": false,
+        "outDir": "./build",
+        "rootDir": "./src",
+        "strict": true,
+        "esModuleInterop": true,
+        "declaration": true
+    }
+}
