@@ -319,6 +319,37 @@ If you would also have DIMENSION-approval and had posted the data above - we wou
 
 And we would only have one (1) label `<UNK>` and in this case the model would not make any sense (always predict <UNK> with probability 1)
 
+### Finvoice, TEAPPS and other e-invoice formats (xml or other)
+
+Using an [e-Invoice](https://en.wikipedia.org/wiki/Electronic_invoicing) as the data source is always the preferred option. This way the model will have most data and we do not have to concern ourselves with e.g. [OCR errors](#scanned-PDF-invoices) or other e.g. [user added invoices](#other-invoices).
+
+For Finvoice, TEAPPS and other e-invoices:
+
+-   coerce the xml invoice into `IFabricaiInvoice` format
+-   make sure that it passes the validation (especially math related to values and totals)
+-   add the original xml invoice as an attachment
+
+### Scanned PDF invoices
+
+Using PDF invoice will lead to lower accuracy for model, as we have to conted ourselves with:
+
+-   less data
+-   uncertain data
+-   OCR errors for images (these are made by **YOUR** digitalization workflow)
+-   data parsing / processing errors for data PDFs (these are made by **YOUR** digitalization workflow)
+
+For PDF invoices:
+
+-   try to structure as much of the invoice's data as possible
+-   for rest, use placeholders
+-   if you do not parse invoiceRows, add them as "According to attachment"
+-   make sure that used VAT Rate validates
+-   add the original PDF files as attachments
+
+### Other invoices
+
+User added content, e.g. a customer manually adds an invoice to accounting system should be handled the same way as PDF invoice.
+
 ### Minimum requirements for the dataset
 
 The rule of thumb is to POST all invoices that you have from last two to three years. The more the better.
