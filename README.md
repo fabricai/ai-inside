@@ -7,7 +7,7 @@
   <h3 align="center">AI Inside by FabricAI</h3>
 
   <p align="center">
-    AI Inside by FabricAI provides a mass customizable <b>state-of-the-art</b> Artifical Intelligence to automate your purchase invoice processes.
+    AI Inside by FabricAI provides a mass customizable <b>state-of-the-art</b> Artificial Intelligence for purchase invoice processes.
     <br />
     <a href="https://fabricai.fi"><strong>FabricAI»</strong></a>
     <br />
