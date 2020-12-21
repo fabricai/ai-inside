@@ -26,7 +26,7 @@
 
 ## About
 
-AI Inside by FabricAI offers developers a quick and easy way to integrate FabricAI's **state-of-the-art** AI in their own purchase invoice automation workflows as a SaaS.
+AI Inside by FabricAI offers developers a quick and easy way to integrate FabricAI's **state-of-the-art** AI in their own purchase invoice automation workflows as a SaaS via simple REST API.
 
 You can use the AI Inside by FabricAI to:
 
@@ -349,6 +349,8 @@ For PDF invoices:
 ### Other invoices
 
 User added content, e.g. a customer manually adds an invoice to accounting system should be handled the same way as PDF invoice.
+
+Here, make sure to add all attachments to the `IFabricaiInvoice` if they just are allowed `mimeType`.
 
 ### Minimum requirements for the dataset
 

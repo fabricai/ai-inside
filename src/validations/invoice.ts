@@ -33,6 +33,7 @@ export const invoice = async (
     }
 
     const {
+        id,
         invoiceDate,
         invoiceDueDate,
         invoiceRows,
@@ -40,6 +41,14 @@ export const invoice = async (
         invoiceTotalInOriginalCurrency,
         paymentInfo: { currencyRate },
     } = value;
+
+    if (typeof id !== 'string' || !/^[a-zA-Z0-9-]+$/.test(id)) {
+        const message = `For invoice ${value.id} validations failed :: the invoice's id must be of type string and meet RegExp(/^[a-zA-Z0-9-]+$/)`;
+        if (verbose) {
+            console.log(message);
+        }
+        return { isValid: false, message };
+    }
 
     /**
      * Make sure that all dates are valid and in the format YYYY-MM-DD
