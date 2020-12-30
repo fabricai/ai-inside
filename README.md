@@ -74,7 +74,7 @@ At the moment this is done manually for each customer (you).
 
 _Required_
 
-An organization is e.g. an accounting office, a software vendor, an individual developer, or an integration partern.
+An organization is e.g. an accounting office, a software vendor, an individual developer, or an integration partner.
 
 Organization in FabricAI has:
 
@@ -145,7 +145,7 @@ Accountant:
 -   belongs to [0 ... n] teams, and
 -   has [0 ... n] integrations
 
-whose accounting she is doing. Acocuntant mainly uses [FabricAI's UI](https://app.fabricai.fi)
+whose accounting he/she is doing. Accountant mainly uses [FabricAI's UI](https://app.fabricai.fi)
 
 </details>
 
@@ -169,7 +169,7 @@ npm install @fabricai/ai-inside
 
 The API can be accessed at `https://api.fabricai.fi/v3/`
 
-To get healt of the enpdoint, you can e.g.
+To get health of the endpoint, you can e.g.
 
 ```sh
 curl -X GET 'https://api.fabricai.fi/v3/health'
@@ -331,7 +331,7 @@ For Finvoice, TEAPPS and other e-invoices:
 
 ### Scanned PDF invoices
 
-Using PDF invoice will lead to lower accuracy for model, as we have to conted ourselves with:
+Using PDF invoice will lead to lower accuracy for model, as we have to contend ourselves with:
 
 -   less data
 -   uncertain data
