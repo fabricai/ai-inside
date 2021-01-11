@@ -26,7 +26,7 @@
 
 ## About
 
-AI Inside by FabricAI offers developers a quick and easy way to integrate FabricAI's **state-of-the-art** AI in their own purchase invoice automation workflows as a SaaS via simple REST API.
+AI Inside by FabricAI offers developers a quick and easy way to integrate FabricAI's **state-of-the-art** AI in their own purchase invoice automation workflows as a microservice via simple REST API.
 
 You can use the AI Inside by FabricAI to:
 
@@ -35,7 +35,7 @@ You can use the AI Inside by FabricAI to:
 -   predict `approval lists` (e.g. this invoice should be sent to John Matrix for approval)
 -   predict `cost center` (e.g. this invoiceRow belongs to "Marketing")
 
-for new invoices. Then you can integrate this information in your own accounting software to speed up the process of handling purchase invoices.
+for new invoices. Then you can integrate this information in your own software to speed up the process of handling purchase invoices.
 
 ## Overview of the process
 
@@ -82,7 +82,7 @@ Organization in FabricAI has:
 -   [0 ... n] teams
 -   [0 ... n] integrations
 
-Organization is identified by an _organizationKey_. You (as an organization's owner) can edit organization's basic info via [admin portal](https://admin.fabricai.fi).
+Organization is identified by an _organizationKey_.
 
 ### Integration
 
@@ -145,7 +145,7 @@ Accountant:
 -   belongs to [0 ... n] teams, and
 -   has [0 ... n] integrations
 
-whose accounting he/she is doing. Accountant mainly uses [FabricAI's UI](https://app.fabricai.fi)
+whose accounting he/she is doing.
 
 </details>
 
@@ -256,9 +256,9 @@ Whenever you start to use new integration, we will setup a new `dataset` that wi
 
 All invoices (both training and live) must and will be validated against interface `IFabricaiInvoice`. Please, make sure to use invoice validation(s) in this repo to make sure that you do not POST invalidated data to our API - they will fail.
 
-_To achieve best possible results for the model, please, use care to fillin as many of the values as possible AND add all the attachment(s) that the invoice has!_
+_To achieve the best possible results for the model, please, use care to fill out as many of the values as possible AND add all the attachment(s) that the invoice has!_
 
-For example, if you have following invoices (only some values of the first invoiceRow of each invoice is shown)
+For an example, if you have following invoices (only some values of the first invoiceRow of each invoice is shown)
 
 ```javascript
 // 1_invoices.json
@@ -325,7 +325,7 @@ Using an [e-Invoice](https://en.wikipedia.org/wiki/Electronic_invoicing) as the 
 
 For Finvoice, TEAPPS and other e-invoices:
 
--   coerce the xml invoice into `IFabricaiInvoice` format
+-   coerce the xml invoice into [`IFabricaiInvoice`](https://github.com/fabricai/ai-inside/blob/cdfb59768dded37b00a148785fd21585e973f40c/src/interfaces/invoice/index.ts#L6) format
 -   make sure that it passes the validation (especially math related to values and totals)
 -   add the original xml invoice as an attachment
 
@@ -365,13 +365,13 @@ This will allow us to train a model, but it will not be that great especially if
 
 ### Different model generations
 
-We currently have three (3) generations of AI that are used in FabricAI.
+We currently have three (3) options for AI that are used in FabricAI.
 
 -   `CHARMANDER` (price optimized, for smallest firms)
 -   `CHARMELEON` (default)
 -   `CHARIZARD` (premium, if a lot of data and we really want to achieve best possible accuracy)
 
-At the moment we have only allowed the use of `CHARMELEON` in AI Inside by FabricAI that is best combination between performance and the cost of training / running the model.
+At the moment we have only allowed the use of `CHARMELEON` in AI Inside by FabricAI that is best combination between performance and the cost of training / running the model. Please contact us if you wish to test other options.
 
 ## General notes
 
@@ -397,7 +397,3 @@ These are in no particular order and come without any guarantees
     -   NOTE! You can technically predict only one label even now, but this requires you to discard the other predictions that are generated automatically for other labels
 -   allow DELETE invoices from dataset
     -   most likely just by `DELETE /ai/training-data/invoices/:invoiceId`
--   allow ACTIVATE / DEACTIVATE model(s) so you do not need to pay for the model deployment when you do not need to get predictions
-    -   most likely just by `PUT /integrations/:integrationKey/mlModel/:modelKey`
-    -   then you would have to wait for the model activation until you could use the model for prediction
-    -   e.g. you could decide to run the models between 00:00 - 02:00 every day and thus the model(s) would incur no deployment cost for the rest of 22 hours per day
