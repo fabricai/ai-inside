@@ -28,11 +28,11 @@
 
 AI Inside by FabricAI offers developers a quick and easy way to integrate FabricAI's **state-of-the-art** AI in their own purchase invoice automation workflows as a microservice via simple REST API.
 
-You can use the AI Inside by FabricAI to:
+You can use the AI Inside by FabricAI e.g. to:
 
 -   predict `accounts` (e.g. this invoiceRow belongs to account "4000 :: Purchases"),
 -   predict `VAT statuses` (e.g. this invoice has "EU Product")
--   predict `approval lists` (e.g. this invoice should be sent to John Matrix for approval)
+-   predict `approval lists` (e.g. this invoice should be sent to "John Matrix" for approval)
 -   predict `cost center` (e.g. this invoiceRow belongs to "Marketing")
 
 for new invoices. Then you can integrate this information in your own software to speed up the process of handling purchase invoices.
@@ -44,7 +44,7 @@ Using the AI Inside by FabricAI should be a continuous process, where you consta
 The basic flow to use AI Inside by FabricAI are (this is demonstrated in /src/sampleFlow):
 
 1. Ask us to setup an organization and integration(s) for you
-2. POST basic info of the integration
+2. POST basic info about the integration
 3. POST all historic training data (invoices with appropriate labels) that will be used to train model(s) from the last two to three years
 4. Request model training for the appropriate label(s) by contacting us
 5. POST new invoices that you want to get predictions for
@@ -59,16 +59,146 @@ Depending on the context of the integration and label(s), it is adviced to train
 
 To start using AI Inside by FabricAI you are going to have to ask us to create:
 
--   an organization
-    -   an API key for the organization
--   a placeholder integration(s)
+-   an `organization` and
+-   an `employeeToken` for the organization
 
-At the moment this is done manually for each customer (you).
+At the moment this is done manually for each customer (you) by FAI.
+
+### Installation
+
+All our public libraries are written in Node.js version 12
+
+1. Clone this repo
+
+```sh
+git clone https://github.com/@fabricai/ai-inside.git
+```
+
+2. Install NPM packages
+
+```sh
+npm install @fabricai/ai-inside
+```
+
+### Endpoint
+
+The REST API can be accessed at `https://api.fabricai.fi/v3/`
+
+### Endpoint security
+
+All endpoints are protected and require authentication with a [JWT](https://jwt.io/introduction/).
+
+A valid JWT token must be present in every request's `Authorization` header in the format `Bearer {encoded JWT}`. All requests without a valid token will fail and return `403`.
+
+### Authentication
+
+Authentication endpoint is `/v3/token/session`
+
+To authenticate, you need provide following data in the headers of your request:
+
+-   employeeToken (required)
+    -   this token is _attached_ to an user and by proxy to an organization
+-   integrationKey (optional)
+    -   this is used to select customerCompany whose data you want to get authorization for
+    -   if no integrationKey is provided, only organization's data is returned
+-   expiresAt (optional)
+    -   javascript timestamp on when the generated JWT will expire
+    -   default is one hour after creation
+
+#### Example authentication
+
+First get the organization's information by providing only your `employeeToken`
+
+```sh
+curl -X GET 'https://api.fabricai.fi/v3/token/session' -H 'EmployeeToken: {employeeToken}'
+```
+
+Then select an integration from path `data.organization.integrations` and pass this key in the header to generate JWT with the `employeeToken`. You may also decide to provide expiresAt timestamp to define a custom expiration for the JWT.
+
+```sh
+curl -X GET 'https://api.fabricai.fi/v3/token/session' -H 'EmployeeToken: {employeeToken}' -H 'IntegrationKey: {integrationKey}' -H 'ExpiresAt: {JS timestamp}'
+```
+
+This request should return following object that includes an encoded JWT token.
+
+```typescript
+enum EResponseStatus {
+    OK = 'OK',
+    FAIL = 'FAIL',
+}
+interface IResponseWrapper {
+    status: EResponseStatus;
+    retryable: boolean;
+    retryDelayMs: number;
+    message?: string;
+    data?: any;
+}
+
+interface IResponseJWT extends IResponseWrapper {
+    data: {
+        // This is the JWT that must be passed in the Authorization: `Bearer {code}`
+        code: string;
+    };
+}
+```
+
+Then you can get this integration's (ie. `integrationKey`s) info by
+
+```sh
+curl -X GET 'https://api.fabricai.fi/v3/integrations' -H 'Authorization: Bearer {encoded JWT}'
+```
+
+The request should return an object
+
+```typescript
+enum EModelLabel {
+    ACCOUNT = 'ACCOUNT',
+    DIMENSION = 'DIMENSION',
+}
+enum EModelGenerator {
+    // Not available via AI Inside by FabricAI
+    CHARMANDER = 'CHARMANDER',
+    CHARMELEON = 'CHARMELEON',
+    // Not available via AI Inside by FabricAI
+    CHARIZARD = 'CHARIZARD',
+    // Going to be released during Q1 or early Q2
+    EEVEE = 'EEVEE',
+}
+interface IResponseIntegration extends IResponseWrapper {
+    data: {
+        integration: {
+            businessId: string;
+            name: string;
+            fiscalPeriodTreshold?: number;
+            mlModels?: {
+                [modelKey]: {
+                    dimensionId: string;
+                    label: EModelLabel;
+                    modelGenerator: EModelGenerator;
+                    modelId: string;
+                    preprocessor: string;
+                    timestamp: number;
+                    trainingId: string;
+                };
+            };
+            system: 'api';
+        };
+    };
+}
+```
 
 ## Terms and definitions
 
 <details>
  <summary>These terms and definitions are used throughout this documentation and AI Inside by FabricAI to describe certain things. (...click to expand)</summary>
+
+### EmployeeToken
+
+_Required_
+
+Employee token is used to authenticate and authroize client against the enpoint.
+
+Employee token is attached to a single user (by `uid`) and by proxy to that user's organization. The Employee token will have admin level access to the organization.
 
 ### Organization
 
@@ -76,7 +206,7 @@ _Required_
 
 An organization is e.g. an accounting office, a software vendor, an individual developer, or an integration partner.
 
-Organization in FabricAI has:
+Organization in AI Inside by FabricAI has:
 
 -   [0 ... n] accountants
 -   [0 ... n] teams
@@ -102,14 +232,6 @@ In AI Inside by FabricAI an integration has:
 -   fiscalyears (/src/interfaces/fisalyears)
     -   suljettu tilikausi
 -   invoices (/src/interfaces/invoice/index.ts)
-
-### API Key
-
-_Required_
-
-API Key is attached to an organization's user and it has _full admin access_ to all organization's information.
-
-You need to provide your API key in the header 'x-api-key' of every single request.
 
 ### Model
 
@@ -149,72 +271,30 @@ whose accounting he/she is doing.
 
 </details>
 
-## Installation
-
-All our public libraries are written in Node.js version 12
-
-1. Clone the repo
-
-```sh
-git clone https://github.com/@fabricai/ai-inside.git
-```
-
-2. Install NPM packages
-
-```sh
-npm install @fabricai/ai-inside
-```
-
-## Accessing the API
-
-The API can be accessed at `https://api.fabricai.fi/v3/`
-
-To get health of the endpoint, you can e.g.
-
-```sh
-curl -X GET 'https://api.fabricai.fi/v3/health'
-```
-
-### Authentication
-
-To authenticate, you need to pass in your API KEY in the header of the request e.g.
-
-```sh
-curl -X GET 'https://api.fabricai.fi/v3/integrations' -H 'x-api-key: YOUR_API_KEY'
-```
-
-OR
-
-```sh
-curl -X POST 'https://api.fabricai.fi/v3/ai/training-data/:integrationKey/invoices' -H 'x-api-key: YOUR_API_KEY'
-```
-
 ## Getting your first model ready
 
 _Please, note that `/v3` is in active development and any or all of these endpoints and/or methods may fail or change without prior warning._
 
 The steps to get AI Inside by FabricAI working for an integration are:
 
-1. GET your organization's integrations by `GET /integrations`
-    - we have populated your organization with multiple integration placeholders
-2. POST sessioninfo, coa, dimensions, and fiscalyears `POST /ai/training-data/:integrationKey/:dataType`
-    - where `integrationKey` is from `GET /integrations`, and
-    - where `const dataType = ['coa', 'dimensions', 'sessioninfo', 'fiscalyears', 'invoices']`
-    - the data must conform to the provided interfaces
+1. Authenticate with employeeToken to an integration by following steps above
+2. POST sessioninfo, coa, dimensions, and fiscalyears `POST /ai/training-data/:dataType`
+    - where `const dataType = ['coa', 'dimensions', 'sessioninfo', 'fiscalyears']`
+    - the data must conform to the provided interfaces in this repo
     - pass in the data in the body.data of the request, plese, see [POSTing data](#posting-data)
     - this will populate the necessary information for the integration and ultimately for the **model(s)**
-3. POST training data `POST /ai/training-data/:integrationKey/invoices`
+3. POST training data `POST /ai/training-data/invoices`
     - at the moment you can post only one invoice at the time
     - it is advisable to
         - always include all invoice's attachment(s) if they are one of the allowed mimeTypes
         - POST all labelled invoices from the last two to three years
     - these include all the samples that you want to use to train the **model**
-    - each sample follows interface for invoice and will be strictly validated
+    - each sample follows interface for invoice (`IFabricaiInvoice`) and will be strictly validated
 4. Request **model** training for the desired label(s) by contacting us
     - this will be automated in a while
 5. WAIT FOR THE MODEL(S) TO TRAIN
-    - once the training is completed, you will see the model(s) by `GET /integrations/:integrationKey` > mlModels
-6. POST new invoices to get predictions from each **model** `POST /ai/models/:integrationKey/:actionAndLabels`
+    - once the training is completed, you will see the model(s) by `GET /integrations` > mlModels
+6. POST new invoices to get predictions from each **model** `POST /data/models/:actionAndLabels`
     - currently `actionAndLabels` only supports `predict`
     - in the future we will allow selecting appropriate labels on per invoice basis e.g. `predict:ACCOUNT,DIMENSION-project`
 
@@ -224,16 +304,17 @@ All data must be posted as (stringified) JSON and must conform to the provided i
 
 For example, when you are POSTing COA, the body of the request would look something like this:
 
-```javascript
+```typescript
 // This would have to be strigified and then added to the body of the request
-const body = {
+const body: { body: IFabricaiCOA } = {
     data: { ledgerAccountCodes: [{ name: 'Purchases', ledgerAccountCode: '4000' }] },
 };
 ```
 
 You can add extra props to the training invoices to control e.g. data retention and how the invoice should be used to train a model.
 
-```javascript
+```typescript
+import { IFabricaiInvoice } from '@fabricai/ai-inside';
 const body = {
     data: IFabricaiInvoice,
     // On when to delete this invoice JS timestamp
@@ -260,7 +341,7 @@ _To achieve the best possible results for the model, please, use care to fill ou
 
 For an example, if you have following invoices (only some values of the first invoiceRow of each invoice is shown)
 
-```javascript
+```typescript
 // 1_invoices.json
 {   id: "1",
     invoiceRows: [{
