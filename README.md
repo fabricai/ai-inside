@@ -1,4 +1,6 @@
+![publish-master-to-npm](https://github.com/fabricai/ai-inside/workflows/publish-master-to-npm/badge.svg)
 <br />
+
 <p align="center">
   <a href="/">
     <img src="https://fabricai.fi/wp-content/uploads/2019/09/FabricAI-Banner-Logo.png" alt="FabricAI Oy" width="730" height="150">
@@ -113,7 +115,7 @@ node build/sampleFlow/2_postTrainingData.js --employeeToken="{YOUR_EMPLOYEE_TOKE
 ##
 ## STEP 3
 ## Ask us to train a model for you
-##
+## Nothing to do here...
 ##
 ## STEP 4
 ## Send invoice to the enpoint to request predictions from the model(s)
@@ -159,7 +161,7 @@ curl -X GET 'https://api.fabricai.fi/v3/token/session' -H 'EmployeeToken: {emplo
 -   Use the JWT to access API
 
 ```sh
-curl -X GET 'https://api.fabricai.fi/v3/integrations' -H 'Authorization: Bearer {encoded JWT}'
+curl -X GET 'https://api.fabricai.fi/v3/integrations' -H 'Authorization: Bearer {JWT}'
 ```
 
 The request should return an object
