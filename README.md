@@ -92,8 +92,34 @@ If you did use Github to clone this repo - you can run sample flow by
 ```sh
 # Install all node deps and compile typescript
 npm i ; tsc ;
+##
+## STEP 1
+##
 ## Start the sample with your employeeToken
+## We should have sent you one via email
 node build/sampleFlow/1_setupIntegration.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}"
+## Then add an integrationKey to the action
+## This will setup integration with demo content and
+## Upload SessionInfo, COA, Dimensions, and Fiscal Period
+## As an extra, we throw one extra sample invoice
+node build/sampleFlow/1_setupIntegration.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}" --integrationKey="{INTEGRATION_KEY_FROM_ABOVE_HERE}"
+##
+## STEP 2
+##
+## Then upload either a folder full of invoices as samples
+node build/sampleFlow/2_postTrainingData.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}" --integrationKey="{INTEGRATION_KEY_FROM_ABOVE_HERE}" --folderRoot
+## Or be lazy and just use same invoice we have for 10x
+node build/sampleFlow/2_postTrainingData.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}" --integrationKey="{INTEGRATION_KEY_FROM_ABOVE_HERE}" --useSampleInvoice
+##
+## STEP 3
+## Ask us to train a model for you
+##
+##
+## STEP 4
+## Send invoice to the enpoint to request predictions from the model(s)
+##
+node build/sampleFlow/3_getPredictions.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}" --integrationKey="{INTEGRATION_KEY_FROM_ABOVE_HERE}" --useSampleInvoice
+
 ```
 
 ## Authentication and authorization
