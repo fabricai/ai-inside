@@ -1,6 +1,6 @@
 {
     "name": "@fabricai/ai-inside",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "AI Inside by FabricAI provides a mass customizable state-of-the-art Artificial Intelligence for purchase invoice processes.",
     "main": "./build/index.js",
     "types": "./build/index.d.ts",
