@@ -32,23 +32,31 @@ const postTrainingData = async () => {
           }
         : { data: invoice };
 
-    const invoiceId = invoiceToPost.data.id;
     const invoiceResponse = await asyncRequest({
         url: `${API_VERSION_ENDPOINT}/data/predict`,
         method: 'POST',
         headers: await getJWTToken(employeeToken, integrationKey),
         json: invoiceToPost,
     });
-    console.log(invoiceResponse);
-    return;
+
     if (invoiceResponse.statusCode !== 200) {
         console.log(invoiceResponse);
         return;
     }
+    await asyncDelay(5000);
     while (true) {
-        await asyncDelay(5000);
+        /**
+         * Use param invoiceKey from response to GET this specific prediction once
+         * it is completed.
+         *
+         * Using invoiceId is also possible, but here you will need to QUERY the
+         * endpoint and then you will get an ARRAY of invoice predictions in response
+         * that all share the same invoiceId
+         *
+         * E.g. GET /v3/data?invoiceId=${invoiceId}
+         */
         const resultResponse = await asyncRequest({
-            url: `${API_VERSION_ENDPOINT}/data?invoiceId=${invoiceId}`,
+            url: `${API_VERSION_ENDPOINT}/data/${invoiceResponse.json.data.invoiceKey}`,
             method: 'GET',
             headers: await getJWTToken(employeeToken, integrationKey),
         });
@@ -58,16 +66,21 @@ const postTrainingData = async () => {
                     ``,
                     `***** SUCCESS ****`,
                     ``,
-                    `Setting up training data for this integration was successful`,
-                    `\t-integrationKey  ${integrationKey}`,
+                    `You have successfully:`,
+                    `\t1. Authenticated to the endpoint`,
+                    `\t2. Setup a new integration`,
+                    `\t3. Provided training data`,
+                    `\t4. Created an AI model`,
+                    `\t5. Used the model to generate predictions`,
                     ``,
-                    `Next - you need to ask us to train the model(s)!`,
-                    ``,
+                    `Sweet!`,
                     ``,
                 ].join('\r\n')
             );
             return resultResponse.json;
         }
+        console.log(`Nothing yet... wait for another ${resultResponse.json.retryDelayMs} ms`);
+        await asyncDelay(resultResponse.json.retryDelayMs);
     }
 };
 postTrainingData().then((s) => {
