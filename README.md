@@ -45,7 +45,7 @@ Using the AI Inside by FabricAI should be a continuous process, where you consta
 
 The basic flow to use AI Inside by FabricAI are (this is demonstrated in /src/sampleFlow):
 
-1. Ask us to setup an organization and integration(s) for you
+1. Ask us to setup an organization for you
 2. POST basic info about the integration
 3. POST all historic training data (invoices with appropriate labels) that will be used to train model(s) from the last two to three years
 4. Request model training for the appropriate label(s) by contacting us
@@ -89,7 +89,7 @@ npm install @fabricai/ai-inside
 
 ### Sample flow
 
-If you did use Github to clone this repo - you can run sample flow by
+If you did use Github to clone this repo - you can go through the whole flow by
 
 ```sh
 # Install all node deps and compile typescript
