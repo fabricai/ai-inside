@@ -93,25 +93,30 @@ If you did use Github to clone this repo - you can run sample flow by
 
 ```sh
 # Install all node deps and compile typescript
-npm i ; tsc ;
+npm i ; tsc
+
 ##
 ## STEP 1
 ##
 ## Start the sample with your employeeToken
 ## We should have sent you one via email
 node build/sampleFlow/1_setupIntegration.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}"
+
 ## Then add an integrationKey to the action
 ## This will setup integration with demo content and
 ## Upload SessionInfo, COA, Dimensions, and Fiscal Period
 ## As an extra, we throw one extra sample invoice
 node build/sampleFlow/1_setupIntegration.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}" --integrationKey="{INTEGRATION_KEY_FROM_ABOVE_HERE}"
+
 ##
 ## STEP 2
 ##
 ## Then upload either a folder full of invoices as samples
 node build/sampleFlow/2_postTrainingData.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}" --integrationKey="{INTEGRATION_KEY_FROM_ABOVE_HERE}" --folderRoot
+
 ## Or be lazy and just use same invoice we have for 10x
 node build/sampleFlow/2_postTrainingData.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}" --integrationKey="{INTEGRATION_KEY_FROM_ABOVE_HERE}" --useSampleInvoice
+
 ##
 ## STEP 3
 ## Ask us to train a model for you
@@ -488,6 +493,11 @@ At the moment we have only allowed the use of `CHARMELEON` in AI Inside by Fabri
 
 These are in no particular order and come without any guarantees
 
+-   finalize `EEVEE` generation (and it's variations). This will bring several benefits to AI Inside by FabricAI users like
+    -   significantly lower cost of model deployment (with a slightly increased lag for deployment due to cold start)
+    -   increased level of accuracy
+    -   possiblity of deploying a valid ensemble of models for each label
+        -   the `CHARMELEON` model generation is trained in a sufficiently different way that the use of ensemble would probably provide added benefits like reduced variance
 -   allow specifying different datasetTags for invoice
     -   e.g. `{ data: IFabricaiInvoice, datasetTags: [ 'creditCard' ] }` for invoices that should ONLY be used to train models to predict something related to creditCard
     -   this will allow you to use different kind of data for different kind of models (now we use all invoices)
@@ -496,3 +506,4 @@ These are in no particular order and come without any guarantees
     -   NOTE! You can technically predict only one label even now, but this requires you to discard the other predictions that are generated automatically for other labels
 -   allow DELETE invoices from dataset
     -   most likely just by `DELETE /ai/training-data/invoices/:invoiceId`
+-   deprecate `CHARMANDER` family due to the lauch and developement of `EEVEE`
