@@ -7,6 +7,7 @@ export * from "./constants/vatPercentage"
 export * from "./helpers/interfaces"
 // From folder interfaces
 export * from "./interfaces/sessioninfo"
+export * from "./interfaces/endpoint/index"
 export * from "./interfaces/dimensions"
 export * from "./interfaces/coa"
 export * from "./interfaces/fiscalyears"
