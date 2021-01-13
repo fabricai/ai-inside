@@ -39,7 +39,7 @@ for new invoices. Then you can integrate this information in your own software t
 
 ## Overview of the process
 
-Using the AI Inside by FabricAI should be a continuous process, where you constantly update your dataset with latest data and periodically retrain the model(s).
+Using the AI Inside by FabricAI should be a continuous process, where you constantly update your dataset(s) with the latest available data and periodically retrain the model(s).
 
 The basic flow to use AI Inside by FabricAI are (this is demonstrated in /src/sampleFlow):
 
@@ -55,12 +55,17 @@ Depending on the context of the integration and label(s), it is adviced to train
 
 ## Getting started
 
+### Endpoint
+
+The REST API can be accessed at `https://api.fabricai.fi/v3/`
+
 ### Prerequisites
 
-To start using AI Inside by FabricAI you are going to have to ask us to create:
+To start using AI Inside by FabricAI, you are going to have to ask us to create:
 
--   an `organization` and
--   an `employeeToken` for the organization
+-   an `organization`,
+-   a master user to the organization, and
+-   an `employeeToken` for the master user
 
 At the moment this is done manually for each customer (you) by FAI.
 
@@ -80,69 +85,52 @@ git clone https://github.com/@fabricai/ai-inside.git
 npm install @fabricai/ai-inside
 ```
 
-### Endpoint
+### Sample flow
 
-The REST API can be accessed at `https://api.fabricai.fi/v3/`
+If you did use Github to clone this repo - you can run sample flow by
 
-### Endpoint security
+```sh
+# Install all node deps and compile typescript
+npm i ; tsc ;
+## Start the sample with your employeeToken
+node build/sampleFlow/1_setupIntegration.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}"
+```
 
-All endpoints are protected and require authentication with a [JWT](https://jwt.io/introduction/).
+## Authentication and authorization
 
-A valid JWT token must be present in every request's `Authorization` header in the format `Bearer {encoded JWT}`. All requests without a valid token will fail and return `403`.
+<details>
+ <summary>Authentication and authorization are handled with an employeeToken and a JWT (...click to expand)</summary>
 
 ### Authentication
 
+REST API uses 3 different tokens/keys to handle authentication and authorization:
+
+-   **employeeToken** is created for your organization's admin users and it provides admin level access to organization and its integrations
+-   **integrationKey** is unique key (id) that identifies an integration (e.g. Acme Corporation) in FabricAI
+-   **sessionToken** is JWT that is used as an authorization to organization's integration as the employee
+
+The necessary tokens are passed in the header of every request.
+
+Note that while the integrationKey and sessionToken can be passed to client-side implementations, the employeeToken should always be kept secret.
+
+### Basic authentication flow
+
 Authentication endpoint is `/v3/token/session`
 
-To authenticate, you need provide following data in the headers of your request:
-
--   employeeToken (required)
-    -   this token is _attached_ to an user and by proxy to an organization
--   integrationKey (optional)
-    -   this is used to select customerCompany whose data you want to get authorization for
-    -   if no integrationKey is provided, only organization's data is returned
--   expiresAt (optional)
-    -   javascript timestamp on when the generated JWT will expire
-    -   default is one hour after creation
-
-#### Example authentication
-
-First get the organization's information by providing only your `employeeToken`
+-   Use the `employeeToken` to fetch information about the organization, including integrations
 
 ```sh
 curl -X GET 'https://api.fabricai.fi/v3/token/session' -H 'EmployeeToken: {employeeToken}'
 ```
 
-Then select an integration from path `data.organization.integrations` and pass this key in the header to generate JWT with the `employeeToken`. You may also decide to provide expiresAt timestamp to define a custom expiration for the JWT.
+-   Select one of the integrations
+-   Use the employeetoken and integrationKey to generate JWT
 
 ```sh
 curl -X GET 'https://api.fabricai.fi/v3/token/session' -H 'EmployeeToken: {employeeToken}' -H 'IntegrationKey: {integrationKey}' -H 'ExpiresAt: {JS timestamp}'
 ```
 
-This request should return following object that includes an encoded JWT token.
-
-```typescript
-enum EResponseStatus {
-    OK = 'OK',
-    FAIL = 'FAIL',
-}
-interface IResponseWrapper {
-    status: EResponseStatus;
-    retryable: boolean;
-    retryDelayMs: number;
-    message?: string;
-    data?: any;
-}
-
-interface IResponseJWT extends IResponseWrapper {
-    data: {
-        // This is the JWT that must be passed in the Authorization: `Bearer {code}`
-        code: string;
-    };
-}
-```
-
-Then you can get this integration's (ie. `integrationKey`s) info by
+-   Use the JWT to access API
 
 ```sh
 curl -X GET 'https://api.fabricai.fi/v3/integrations' -H 'Authorization: Bearer {encoded JWT}'
@@ -161,7 +149,7 @@ enum EModelGenerator {
     CHARMELEON = 'CHARMELEON',
     // Not available via AI Inside by FabricAI
     CHARIZARD = 'CHARIZARD',
-    // Going to be released during Q1 or early Q2
+    // Going to be released during Q1 or early Q2/2021
     EEVEE = 'EEVEE',
 }
 interface IResponseIntegration extends IResponseWrapper {
@@ -187,12 +175,14 @@ interface IResponseIntegration extends IResponseWrapper {
 }
 ```
 
+</details>
+
 ## Terms and definitions
 
 <details>
  <summary>These terms and definitions are used throughout this documentation and AI Inside by FabricAI to describe certain things. (...click to expand)</summary>
 
-### EmployeeToken
+### employeeToken
 
 _Required_
 

@@ -8,6 +8,11 @@ export const invoice: IFabricaiInvoice = {
     invoiceDueDate: '2020-10-19',
     invoiceTotal: 100,
     invoiceTotalInOriginalCurrency: 100,
+    /**
+     * NOTE :: Here we use just sessionInfo
+     * as this is same interface as the "real"
+     * address for seller, billing and delivery
+     */
     sellerAddress: sessionInfo,
     billingAddress: sessionInfo,
     deliveryAddress: sessionInfo,

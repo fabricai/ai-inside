@@ -10,9 +10,9 @@ export const asyncRequest = async (params: any): Promise<IRequestOutput> => {
         request(params, (e: any, h: any, b: any) => {
             const error = e || null;
             const statusCode = h && typeof h.statusCode === 'number' ? h.statusCode : 400;
-            let json = null;
+            let json = b;
             try {
-                json = JSON.parse(b);
+                json = JSON.parse(json);
             } catch (e) {}
             return resolve({
                 statusCode,
