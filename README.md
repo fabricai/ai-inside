@@ -96,15 +96,24 @@ If you did use Github to clone this repo - you can go through the whole flow by
 npm i ; tsc
 
 ##
+## STEP 0
+##
+## Let's start by conntecting to the organization and creating first JWT
+## Whenever we authenticate - if we do not provide an --integrationKey
+## We are logged in only to the organization and can view its data
+node build/sampleFlow/0_createIntegration.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}"
+
+## Now - if we run the following command, we will create a new integration
+## And add it to your organization. For the sample data we just use data from
+## /src/smapleFlow/samples/sessionInfo
+node build/sampleFlow/0_createIntegration.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}" --createFirstIntegration
+
+##
 ## STEP 1
 ##
-## Start the sample with your employeeToken
-## We should have sent you one via email
-node build/sampleFlow/1_setupIntegration.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}"
-
-## Then add an integrationKey to the action
+## Next - let's use that integration and set it up properly
 ## This will setup integration with demo content and
-## Upload SessionInfo, COA, Dimensions, and Fiscal Period
+## Upload SessionInfo (again but for demo), COA, Dimensions, and Fiscal Period
 ## As an extra, we throw one extra sample invoice
 node build/sampleFlow/1_setupIntegration.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}" --integrationKey="{INTEGRATION_KEY_FROM_ABOVE_HERE}"
 
