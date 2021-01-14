@@ -127,6 +127,12 @@ node build/sampleFlow/2_postTrainingData.js --employeeToken="{YOUR_EMPLOYEE_TOKE
 ##
 node build/sampleFlow/3_getPredictions.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_HERE}" --integrationKey="{INTEGRATION_KEY_FROM_ABOVE_HERE}" --useSampleInvoice
 
+##
+## STEP 5
+## Congratulate yourself by telling yourself that you are a good boy
+##
+echo 'Who is a good boy?' ; read ; echo Yes you are, yes you are!!
+
 ```
 
 ## Authentication and authorization
@@ -142,7 +148,7 @@ REST API uses 3 different tokens/keys to handle authentication and authorization
 -   **integrationKey** is unique key (id) that identifies an integration (e.g. Acme Corporation) in FabricAI
 -   **sessionToken** is JWT that is used as an authorization to organization's integration as the employee
 
-The necessary tokens are passed in the header of every request.
+The necessary tokens are passed in the header of every request. If you do not pass in `integrationKey` in the header, you will be using the integration as the `organization`.
 
 Note that while the integrationKey and sessionToken can be passed to client-side implementations, the employeeToken should always be kept secret.
 
