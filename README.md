@@ -140,7 +140,7 @@ node build/sampleFlow/3_getPredictions.js --employeeToken="{YOUR_EMPLOYEE_TOKEN_
 ## STEP 5
 ## Congratulate yourself by telling yourself that you are a good boy
 ##
-echo 'Who is a good boy?' ; read ; echo Yes you are, yes you are!!
+echo 'Who is a good boy?' ; read ; echo 'Yes you are, yes you are!!'
 
 ```
 
@@ -258,7 +258,7 @@ _Required_
 
 Integration is a company whose invoices are being processed with AI Inside by FabricAI.
 
-Integration is identified by an _integrationKey_ that can be fetched via the API. If you need more integrations, you are going to have to ask us to make more placeholders and assign them to your organization.
+Integration is identified by an _integrationKey_ that can be created and fetched via the API
 
 In AI Inside by FabricAI an integration has:
 
