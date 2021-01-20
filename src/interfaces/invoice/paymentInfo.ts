@@ -18,7 +18,15 @@ export interface IFabricaiPaymentInfo {
      * If the invoice is in USD and
      * the integration has EUR
      * this would be around 1.21 (EUR -> USD)
+     *
+     * If the invoice is in EUR and
+     * the integration has EUR
+     * this would be 1
      */
     currencyRate: number;
+    /**
+     * Bank account where invoice is supposed
+     * to be paid
+     */
     bankAccount: IFabricaiBankAccount;
 }
