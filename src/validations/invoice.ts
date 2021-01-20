@@ -8,6 +8,7 @@ import validator from '../interfaces/invoice/index-ti';
 import { MAXIMUM_ALLOWED_DIFFERENCE_BETWEEN_TWO_EQUAL_VALUES } from '../variables';
 import { TISOCountry } from '../types/country';
 import { allowedVatPercentage } from '../constants/vatPercentage';
+import { electronicFormatIBAN, isValidIBAN } from 'ibantools';
 /**
  * Checks whether the invoice is valid AND its math is valid and sound
  * Also check that mimeType of each attachment matches magic number
@@ -39,7 +40,7 @@ export const invoice = async (
         invoiceRows,
         invoiceTotal,
         invoiceTotalInOriginalCurrency,
-        paymentInfo: { currencyRate },
+        paymentInfo: { currencyRate, bankAccount },
     } = value;
 
     if (typeof id !== 'string' || !/^[a-zA-Z0-9-]+$/.test(id)) {
@@ -147,6 +148,31 @@ export const invoice = async (
                 console.log(message);
             }
             return { isValid: false, message };
+        }
+    }
+
+    /**
+     * Make sure that if the iban is specified it is valid
+     * Allow both:
+     *  - electronicFormatIBAN (no spaces)
+     *  - friendlyFormatIBAN (with spaces)
+     *
+     */
+    if (bankAccount && bankAccount.iban) {
+        let haveValidIban = false;
+        for (const iban of [
+            bankAccount.iban,
+            electronicFormatIBAN(bankAccount.iban || undefined),
+        ].filter(Boolean)) {
+            if (iban && isValidIBAN(iban)) {
+                haveValidIban = true;
+            }
+        }
+        if (!haveValidIban) {
+            return {
+                isValid: false,
+                message: `For invoice ${value.id} the iban (${bankAccount.iban}) is not valid`,
+            };
         }
     }
     return { isValid: true };
